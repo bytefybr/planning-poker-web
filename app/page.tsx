@@ -6,9 +6,7 @@ import io from "socket.io-client";
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL ?? "");
 
 export default function Home() {
-  const [roomId, setRoomId] = useState(
-    new URLSearchParams(window.location.search).get("roomId")
-  );
+  const [roomId, setRoomId] = useState<any>();
   const [username, setUsername] = useState("");
 
   const [roomData, setRoomData] = useState<any>();
@@ -96,6 +94,14 @@ export default function Home() {
   useEffect(() => {
     initSocketEvents();
   }, [initSocketEvents]);
+
+  useEffect(() => {
+    if (window) {
+      setRoomId(
+        new URLSearchParams(window.location.search).get("roomId") ?? null
+      );
+    }
+  }, []);
 
   return (
     <div className="container mx-auto p-4">
