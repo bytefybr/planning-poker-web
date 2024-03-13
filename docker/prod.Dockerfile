@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm
+RUN npm install
 
 RUN npm build
 
