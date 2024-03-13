@@ -23,6 +23,10 @@ export default function Home() {
       alert(1);
     });
 
+    socket.on("ressetMyCard", (roomId) => {
+      setCard("");
+    });
+
     socket.on("roomJoined", (roomId) => {
       console.log("Você entrou na sala:", roomId);
       alert("Você entrou na sala: " + roomId);
@@ -209,6 +213,25 @@ export default function Home() {
             onClick={() => selectCard("8")}
           >
             8
+          </button>
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+            onClick={() => selectCard("13")}
+          >
+            13
+          </button>
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+            onClick={() => selectCard("21")}
+          >
+            21
+          </button>
+
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+            onClick={() => selectCard("?")}
+          >
+            ?
           </button>
           <br />
           <br />
