@@ -59,7 +59,7 @@ export default function Home() {
   };
 
   // Função para selecionar uma carta
-  const selectCard = (card) => {
+  const selectCard = (card: any) => {
     socket.emit("selectCard", roomId, card);
     setCard(card);
   };
