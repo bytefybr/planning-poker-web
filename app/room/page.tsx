@@ -129,10 +129,13 @@ export default function Page() {
       if (type === "create" || type === "join") {
         setRoomType(type);
       }
-    } else {
-      router.push("/");
+      return;
     }
-  }, [searchParams, router]);
+
+    if (roomData) return;
+
+    router.push("/");
+  }, [searchParams, router, roomData]);
 
   useEffect(() => {
     initSocketEvents();
