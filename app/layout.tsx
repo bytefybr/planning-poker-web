@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 
+import { Suspense } from "react";
 import { GeistSans } from "geist/font/sans";
 import { cn } from "../lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -35,7 +36,9 @@ export default function RootLayout({
         >
           <Header />
           <main className="flex flex-1 flex-col w-full items-center justify-center px-4 2xl:px-0">
-            <div className="flex flex-col max-w-[1400px]">{children}</div>
+            <Suspense>
+              <div className="flex flex-col max-w-[1400px]">{children}</div>
+            </Suspense>
           </main>
           <Footer />
         </ThemeProvider>
