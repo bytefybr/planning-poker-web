@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 
 import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
+import Analytics from "@/components/ui/analytics";
 
 export default function RootLayout({
   children,
@@ -28,6 +29,7 @@ export default function RootLayout({
           GeistSans.variable
         )}
       >
+        <Analytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,7 +37,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <main className="flex flex-1 flex-col w-full items-center justify-center px-4 2xl:px-0">
+          <main className="flex flex-1 flex-col w-full items-center justify-center px-4 2xl:px-0  py-40">
             <Suspense>
               <div className="flex flex-col max-w-[1400px]">{children}</div>
             </Suspense>

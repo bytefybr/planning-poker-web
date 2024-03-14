@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
-function fibonacci(n: number): number {
-  if (n <= 1) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
 const AnimatedLogo = () => {
-  const [fibonacciIndex, setFibonacciIndex] = useState(1);
+  const [fibonacciIndex, setFibonacciIndex] = useState<number>(0);
+  const fibonacciNumbers = [1, 3, 5, 8];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFibonacciIndex((prevIndex) => {
-        if (prevIndex === 6) {
-          return 1;
+      setFibonacciIndex((prevIndex: number) => {
+        if (prevIndex >= 3) {
+          return 0;
         } else {
           return prevIndex + 1;
         }
@@ -25,7 +21,7 @@ const AnimatedLogo = () => {
 
   return (
     <div className="flex w-[216px] h-[212px] items-center justify-center">
-      <p className="font-bold text-9xl">{fibonacci(fibonacciIndex)}</p>
+      <p className="font-bold text-9xl">{fibonacciNumbers[fibonacciIndex]}</p>
       <div className="absolute flex w-[216px] h-[212px] ml-[78px] mt-[14px]">
         <Image
           src="/logo-empty.png"

@@ -20,7 +20,7 @@ const Header = () => {
   const { setTheme } = useTheme();
 
   return (
-    <header className="flex w-full h-16 bg-zinc-50 justify-center border-b border-zinc-200 dark:bg-zinc-900 dark:border-zinc-700 px-4 2xl:px-0">
+    <header className="fixed flex w-full h-16 bg-zinc-50 justify-center border-b border-zinc-200 dark:bg-zinc-900 dark:border-zinc-700 px-4 2xl:px-0 z-10">
       <div className="flex w-full max-w-[1400px] items-center justify-between">
         <div
           className="flex items-center gap-2 cursor-pointer"
