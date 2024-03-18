@@ -41,6 +41,11 @@ export default function Page() {
   const [showResetButton, setShowResetButton] = useState(false);
 
   const initSocketEvents = useCallback(() => {
+    socket.on("roomNotFound", () => {
+      setAlertDialogOpen(true);
+      setAlertDialogMessage("Sala não encontrada.");
+    });
+
     socket.on("roomCreated", (roomId) => {
       toast({
         title: "Sala criada!",
