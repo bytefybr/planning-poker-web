@@ -16,6 +16,7 @@ import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
 import Analytics from "@/components/ui/analytics";
 import Adsense from "@/components/ui/adsense";
+import Head from "next/head";
 
 export default function RootLayout({
   children,
@@ -24,6 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
+      <Head>
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-8772352972494567"
+        ></meta>
+      </Head>
       <body
         className={cn(
           "flex flex-col min-h-screen bg-background font-sans antialiased",
