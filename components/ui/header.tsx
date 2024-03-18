@@ -29,12 +29,12 @@ const Header = () => {
           <Image
             className="dark:invert"
             src="/logo.png"
-            alt="Poker Plan"
+            alt="Plan Poker"
             width={41}
             height={40}
           />
           <p className="font-bold text-xl text-zinc-800 dark:text-zinc-50">
-            Poker Plan
+            Plan Poker
           </p>
         </div>
 

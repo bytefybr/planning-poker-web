@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Adsense } from "@ctrl/react-adsense";
 
 import AnimatedLogo from "@/components/ui/animated-logo";
 
