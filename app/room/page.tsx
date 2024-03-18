@@ -43,7 +43,7 @@ export default function Page() {
   const initSocketEvents = useCallback(() => {
     socket.on("roomNotFound", () => {
       setAlertDialogOpen(true);
-      setAlertDialogMessage("Sala não encontrada.");
+      setAlertDialogMessage("Sala não encontrada, verifique o ID informado.");
     });
 
     socket.on("roomCreated", (roomId) => {
@@ -104,7 +104,9 @@ export default function Page() {
     );
 
     if (usersSelected.length !== roomData.users.length) {
-      setAlertDialogMessage("Nem todos os jogadores selecionaram suas cartas");
+      setAlertDialogMessage(
+        "Nem todos os jogadores selecionaram suas cartas, aguarde para prosseguir."
+      );
       setAlertDialogOpen(true);
 
       return;
