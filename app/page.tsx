@@ -2,11 +2,28 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import AnimatedLogo from "@/components/ui/animated-logo";
 
 export default function Page() {
   const router = useRouter();
+
+  useEffect(() => {
+    const disablePinchZoom = (event: any) => {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("touchmove", disablePinchZoom, {
+      passive: false,
+    });
+
+    return () => {
+      document.removeEventListener("touchmove", disablePinchZoom);
+    };
+  }, []);
 
   return (
     <div className="flex-1">

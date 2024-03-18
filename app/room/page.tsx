@@ -207,6 +207,22 @@ export default function Page() {
     initSocketEvents();
   }, [initSocketEvents]);
 
+  useEffect(() => {
+    const disablePinchZoom = (event: any) => {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("touchmove", disablePinchZoom, {
+      passive: false,
+    });
+
+    return () => {
+      document.removeEventListener("touchmove", disablePinchZoom);
+    };
+  }, []);
+
   return (
     <>
       {(roomType || roomId) && (
