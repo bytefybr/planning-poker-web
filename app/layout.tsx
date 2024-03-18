@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
 import Analytics from "@/components/ui/analytics";
-import Head from "next/head";
+import Adsense from "@/components/ui/adsense";
 
 export default function RootLayout({
   children,
@@ -24,12 +24,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <Head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8772352972494567"
-        ></script>
-      </Head>
       <body
         className={cn(
           "flex flex-col min-h-screen bg-background font-sans antialiased",
@@ -52,6 +46,7 @@ export default function RootLayout({
           <Footer />
         </ThemeProvider>
       </body>
+      <Adsense pId="ca-pub-8772352972494567" />
     </html>
   );
 }
