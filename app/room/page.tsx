@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Adsense } from "@ctrl/react-adsense";
 
 import io from "socket.io-client";
 
@@ -312,6 +313,8 @@ export default function Page() {
               Voltar
             </Button>
           )}
+
+          <Adsense client="ca-pub-8772352972494567" slot="5902105855" />
         </main>
       )}
     </>
