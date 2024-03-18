@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { GeistSans } from "geist/font/sans";
 import { cn } from "../lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Plan Poker",
@@ -50,6 +51,7 @@ export default function RootLayout({
               <div className="flex flex-col max-w-[1400px]">{children}</div>
             </Suspense>
           </main>
+          <Toaster />
           <Footer />
         </ThemeProvider>
       </body>
