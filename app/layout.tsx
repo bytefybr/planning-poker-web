@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 
+import { useEffect } from "react";
 import { Suspense } from "react";
 import { GeistSans } from "geist/font/sans";
 import { cn } from "../lib/utils";
@@ -24,6 +25,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    const disablePinchZoom = (event: any) => {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("touchmove", disablePinchZoom, {
+      passive: false,
+    });
+
+    return () => {
+      document.removeEventListener("touchmove", disablePinchZoom);
+    };
+  }, []);
+
   return (
     <html lang="pt-br">
       <Head>
