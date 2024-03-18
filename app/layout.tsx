@@ -53,7 +53,7 @@ export default function RootLayout({
           <Footer />
         </ThemeProvider>
       </body>
-      <Adsense pId="ca-pub-8772352972494567" />
+      <Adsense pId="8772352972494567" />
     </html>
   );
 }
