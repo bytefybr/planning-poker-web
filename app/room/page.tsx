@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Adsense } from "@ctrl/react-adsense";
 import { Check, ChevronLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   AlertDialog,
@@ -39,58 +39,88 @@ export default function Page() {
   const [card, setCard] = useState("");
 
   const [showResetButton, setShowResetButton] = useState(false);
+  const [disconnect, setDisconnect] = useState(false);
 
-  const initSocketEvents = useCallback(() => {
-    socket.on("roomNotFound", () => {
-      setAlertDialogOpen(true);
-      setAlertDialogMessage("Sala não encontrada, verifique o ID informado.");
+  socket.on("roomNotFound", () => {
+    setAlertDialogOpen(true);
+    setAlertDialogMessage("Sala não encontrada, verifique o ID informado.");
+  });
+
+  socket.on("roomCreated", (roomId) => {
+    console.log(socket.id);
+    window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
+    toast({
+      title: "Sala criada!",
+      description: "Compartilhe o link com seu time.",
+    });
+  });
+
+  socket.on("ressetMyCard", (roomId) => {
+    setCard("");
+  });
+
+  socket.on("roomJoined", (roomId) => {
+    window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
+    toast({
+      title: "Acesso concedido!",
+      description: `Você entrou na sala #${roomId}.`,
     });
 
-    socket.on("roomCreated", (roomId) => {
-      toast({
-        title: "Sala criada!",
-        description: "Compartilhe o link com seu time.",
-      });
+    setRoomId(roomId);
+  });
+
+  socket.on("roomListUpdate", (data) => {
+    console.log("Sala atualizada:", data);
+
+    if (!roomId) {
+      window.history.pushState(
+        { roomId: data.roomId },
+        "Sala",
+        `?roomId=${data.roomId}`
+      );
+    }
+
+    setRoomId(data.roomId);
+    setRoomData(data);
+    setShowResetButton(!!data.average);
+  });
+
+  socket.on("connect", () => {
+    toast({
+      title: "Conectado",
+      description: "Você foi conectado a sala.",
     });
+    if (window) {
+      const oldSocketId = window.localStorage?.getItem("pp@oldSocketId");
 
-    socket.on("ressetMyCard", (roomId) => {
-      setCard("");
-    });
+      window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
 
-    socket.on("roomJoined", (roomId) => {
-      toast({
-        title: "Acesso concedido!",
-        description: `Você entrou na sala #${roomId}.`,
-      });
-
-      setRoomId(roomId);
-    });
-
-    socket.on("roomListUpdate", (data) => {
-      console.log("Sala atualizada:", data);
-
-      if (!roomId) {
-        window.history.pushState(
-          { roomId: data.roomId },
-          "Sala",
-          `?roomId=${data.roomId}`
-        );
+      if (oldSocketId && oldSocketId !== "" && oldSocketId !== socket.id) {
+        console.log("Conectado", oldSocketId);
+        socket.emit("reenterInRoom", oldSocketId);
       }
+    }
+  });
 
-      setRoomId(data.roomId);
-      setRoomData(data);
-      setShowResetButton(!!data.average);
+  socket.on("disconnect", () => {
+    setDisconnect(true);
+    toast({
+      title: "Desconectado",
+      description: "Você foi desconectado da sala.",
     });
-  }, [roomId, toast]);
+    console.log("Desconectado");
+  });
 
   const createRoom = () => {
     if (username) {
       socket.emit("createRoom", username);
+      window.localStorage.setItem("pp@username", username);
     }
   };
 
   const joinRoom = () => {
     socket.emit("enterInRoom", roomId, username);
+    window.localStorage.setItem("pp@username", username);
   };
 
   const selectCard = (card: any) => {
@@ -204,8 +234,11 @@ export default function Page() {
   }, [searchParams, router, roomData]);
 
   useEffect(() => {
-    initSocketEvents();
-  }, [initSocketEvents]);
+    const username = window.localStorage.getItem("pp@username");
+    if (username) {
+      setUsername(username);
+    }
+  }, []);
 
   useEffect(() => {
     const disablePinchZoom = (event: any) => {
