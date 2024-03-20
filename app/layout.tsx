@@ -2,21 +2,21 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 
-import { Suspense } from "react";
-import { GeistSans } from "geist/font/sans";
-import { cn } from "../lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { GeistSans } from "geist/font/sans";
+import { Suspense } from "react";
+import { cn } from "../lib/utils";
 
 export const metadata: Metadata = {
   title: "Plan Poker",
   description: "Poker Planning Online",
 };
 
-import Header from "@/components/ui/header";
-import Footer from "@/components/ui/footer";
-import Analytics from "@/components/ui/analytics";
 import Adsense from "@/components/ui/adsense";
+import Analytics from "@/components/ui/analytics";
+import Footer from "@/components/ui/footer";
+import Header from "@/components/ui/header";
 import Head from "next/head";
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
       <Head>
         <meta
           name="google-adsense-account"
-          content="ca-pub-8772352972494567"
+          content="ca-pub-4362319088561782"
         ></meta>
       </Head>
       <body
@@ -55,7 +55,7 @@ export default function RootLayout({
           <Footer />
         </ThemeProvider>
       </body>
-      <Adsense pId="8772352972494567" />
+      <Adsense pId="4362319088561782" />
     </html>
   );
 }
