@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronLeft, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Adsense } from "@ctrl/react-adsense";
 import { useToast } from "@/components/ui/use-toast";
+import { Adsense } from "@ctrl/react-adsense";
+import { Check, ChevronLeft } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   AlertDialog,
@@ -451,7 +451,7 @@ export default function Page() {
             </AlertDialogContent>
           </AlertDialog>
 
-          <Adsense client="ca-pub-8772352972494567" slot="5902105855" />
+          <Adsense client="ca-pub-4362319088561782" slot="5902105855" />
         </main>
       )}
     </>
