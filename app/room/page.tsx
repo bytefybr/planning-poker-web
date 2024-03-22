@@ -397,7 +397,7 @@ export default function Page() {
                             </p>
                           ) : (
                             <p className="text-2xl font-bold text-zinc-500">
-                              <Spade />
+                              ?
                             </p>
                           )}
                         </div>
