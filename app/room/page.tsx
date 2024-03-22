@@ -355,9 +355,9 @@ export default function Page() {
                 )}
 
                 {showResetButton &&
-                  roomData.users[0].numberSelected !== undefined &&
-                  roomData.users[0].numberSelected !== null && (
-                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${roomData.average}`}</p>
+                  roomData?.average !== undefined &&
+                  roomData?.average !== null && (
+                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${roomData?.average}`}</p>
                   )}
               </div>
 
@@ -419,8 +419,8 @@ export default function Page() {
                     variant={card === "0" ? "default" : "outline"}
                     onClick={() => selectCard("0")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     0
@@ -429,8 +429,8 @@ export default function Page() {
                     variant={card === "1" ? "default" : "outline"}
                     onClick={() => selectCard("1")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     1
@@ -439,8 +439,8 @@ export default function Page() {
                     variant={card === "2" ? "default" : "outline"}
                     onClick={() => selectCard("2")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     2
@@ -449,8 +449,8 @@ export default function Page() {
                     variant={card === "3" ? "default" : "outline"}
                     onClick={() => selectCard("3")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     3
@@ -459,8 +459,8 @@ export default function Page() {
                     variant={card === "5" ? "default" : "outline"}
                     onClick={() => selectCard("5")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     5
@@ -469,8 +469,8 @@ export default function Page() {
                     variant={card === "8" ? "default" : "outline"}
                     onClick={() => selectCard("8")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     8
@@ -479,8 +479,8 @@ export default function Page() {
                     variant={card === "13" ? "default" : "outline"}
                     onClick={() => selectCard("13")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     13
@@ -489,8 +489,8 @@ export default function Page() {
                     variant={card === "21" ? "default" : "outline"}
                     onClick={() => selectCard("21")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     21
@@ -499,8 +499,8 @@ export default function Page() {
                     variant={card === "?" ? "default" : "outline"}
                     onClick={() => selectCard("?")}
                     disabled={
-                      roomData.average !== null &&
-                      roomData.average !== undefined
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
                     }
                   >
                     ?
