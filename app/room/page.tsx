@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Adsense } from "@ctrl/react-adsense";
-import { Check, ChevronLeft } from "lucide-react";
+import { Check, ChevronLeft, Spade } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -392,7 +392,7 @@ export default function Page() {
                               {numberSelected ? (
                                 <>{user.numberSelected}</>
                               ) : (
-                                <>{<Check />}</>
+                                <>{<Spade />}</>
                               )}
                             </p>
                           ) : (
