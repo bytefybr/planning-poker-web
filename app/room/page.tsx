@@ -392,12 +392,12 @@ export default function Page() {
                               {numberSelected ? (
                                 <>{user.numberSelected}</>
                               ) : (
-                                <>{<Spade />}</>
+                                <>{<Check />}</>
                               )}
                             </p>
                           ) : (
                             <p className="text-2xl font-bold text-zinc-500">
-                              ?
+                              <Spade />
                             </p>
                           )}
                         </div>
