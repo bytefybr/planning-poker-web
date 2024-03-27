@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { GeistSans } from "geist/font/sans";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { cn } from "../lib/utils";
 
 export const metadata: Metadata = {
@@ -24,6 +24,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src =
+      "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4362319088561782";
+    script.crossOrigin = "anonymous";
+    document.head.appendChild(script);
+  }, []);
+
   return (
     <html lang="pt-br">
       <Head>
