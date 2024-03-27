@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Adsense } from "@ctrl/react-adsense";
-import { Check, ChevronLeft } from "lucide-react";
+import { Check, ChevronLeft, Spade } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -82,14 +82,10 @@ export default function Page() {
 
     setRoomId(data.roomId);
     setRoomData(data);
-    setShowResetButton(!!data.average);
+    setShowResetButton(data.average !== null && data.average !== undefined);
   });
 
   socket.on("connect", () => {
-    toast({
-      title: "Conectado",
-      description: "Você foi conectado a sala.",
-    });
     if (window) {
       const oldSocketId = window.localStorage?.getItem("pp@oldSocketId");
 
@@ -129,19 +125,6 @@ export default function Page() {
   };
 
   const showAllCards = () => {
-    const usersSelected = roomData.users.filter(
-      (user: any) => user.alreadySelected
-    );
-
-    if (usersSelected.length !== roomData.users.length) {
-      setAlertDialogMessage(
-        "Nem todos os jogadores selecionaram suas cartas, aguarde para prosseguir."
-      );
-      setAlertDialogOpen(true);
-
-      return;
-    }
-
     setShowResetButton(true);
     socket.emit("showCards", roomId);
   };
@@ -371,9 +354,11 @@ export default function Page() {
                   </p>
                 )}
 
-                {showResetButton && roomData.users[0].numberSelected && (
-                  <p className="text-zinc-500 text-sm font-bold">{`Média: ${roomData.average}`}</p>
-                )}
+                {showResetButton &&
+                  roomData?.average !== undefined &&
+                  roomData?.average !== null && (
+                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${roomData?.average}`}</p>
+                  )}
               </div>
 
               <div className="flex flex-col items-center justify-center mb-4 gap-3">
@@ -382,18 +367,36 @@ export default function Page() {
                 </p>
                 <div className="grid grid-cols-4 gap-3">
                   {roomData.users.map((user: any) => {
+                    const numberSelected =
+                      user.numberSelected !== null &&
+                      user.numberSelected !== undefined;
+
                     return (
                       <div
                         key={user.socketId}
                         className="flex flex-col items-center justify-center"
                       >
-                        <div className="flex justify-center items-center w-[50px] h-[65px] rounded-sm border-zinc-950 border-2 dark:border-zinc-500">
+                        <div
+                          className={`flex justify-center items-center w-[50px] h-[65px] rounded-sm border-zinc-950 border-2 dark:border-zinc-500 ${
+                            !user.alreadySelected || numberSelected
+                              ? "bg-zinc-200"
+                              : "bg-white"
+                          }`}
+                        >
                           {user.alreadySelected ? (
-                            <p className="text-zinc-500 text-2xl font-bold">
-                              {user.numberSelected || <Check />}
+                            <p
+                              className={`text-zinc-500 text-2xl font-bold ${
+                                numberSelected ? "bg-zinc-200" : "bg-white"
+                              }`}
+                            >
+                              {numberSelected ? (
+                                <>{user.numberSelected}</>
+                              ) : (
+                                <>{<Check />}</>
+                              )}
                             </p>
                           ) : (
-                            <p className="text-zinc-500 text-2xl font-bold">
+                            <p className="text-2xl font-bold text-zinc-500">
                               ?
                             </p>
                           )}
@@ -411,46 +414,94 @@ export default function Page() {
                 <p className="text-zinc-500 text-sm text-center">
                   Selecione a pontuação da tarefa:
                 </p>
-                <div className="flex gap-2 flex-wrap justify-center max-w-60">
+                <div className="flex gap-2 flex-wrap justify-center max-w-64">
+                  <Button
+                    variant={card === "0" ? "default" : "outline"}
+                    onClick={() => selectCard("0")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
+                  >
+                    0
+                  </Button>
                   <Button
                     variant={card === "1" ? "default" : "outline"}
                     onClick={() => selectCard("1")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
                   >
                     1
                   </Button>
                   <Button
+                    variant={card === "2" ? "default" : "outline"}
+                    onClick={() => selectCard("2")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
+                  >
+                    2
+                  </Button>
+                  <Button
                     variant={card === "3" ? "default" : "outline"}
                     onClick={() => selectCard("3")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
                   >
                     3
                   </Button>
                   <Button
                     variant={card === "5" ? "default" : "outline"}
                     onClick={() => selectCard("5")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
                   >
                     5
                   </Button>
                   <Button
                     variant={card === "8" ? "default" : "outline"}
                     onClick={() => selectCard("8")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
                   >
                     8
                   </Button>
                   <Button
                     variant={card === "13" ? "default" : "outline"}
                     onClick={() => selectCard("13")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
                   >
                     13
                   </Button>
                   <Button
                     variant={card === "21" ? "default" : "outline"}
                     onClick={() => selectCard("21")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
                   >
                     21
                   </Button>
                   <Button
                     variant={card === "?" ? "default" : "outline"}
                     onClick={() => selectCard("?")}
+                    disabled={
+                      roomData?.average !== null &&
+                      roomData?.average !== undefined
+                    }
                   >
                     ?
                   </Button>

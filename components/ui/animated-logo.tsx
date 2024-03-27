@@ -3,12 +3,12 @@ import Image from "next/image";
 
 const AnimatedLogo = () => {
   const [fibonacciIndex, setFibonacciIndex] = useState<number>(0);
-  const fibonacciNumbers = [1, 3, 5, 8];
+  const fibonacciNumbers = [0, 1, 2, 3, 5, 8];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setFibonacciIndex((prevIndex: number) => {
-        if (prevIndex >= 3) {
+        if (prevIndex >= 5) {
           return 0;
         } else {
           return prevIndex + 1;
