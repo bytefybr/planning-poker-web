@@ -47,7 +47,6 @@ export default function Page() {
   });
 
   socket.on("roomCreated", (roomId) => {
-    console.log(socket.id);
     window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
     toast({
       title: "Sala criada!",
@@ -70,8 +69,6 @@ export default function Page() {
   });
 
   socket.on("roomListUpdate", (data) => {
-    console.log("Sala atualizada:", data);
-
     if (!roomId) {
       window.history.pushState(
         { roomId: data.roomId },
@@ -92,7 +89,6 @@ export default function Page() {
       window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
 
       if (oldSocketId && oldSocketId !== "" && oldSocketId !== socket.id) {
-        console.log("Conectado", oldSocketId);
         socket.emit("reenterInRoom", oldSocketId);
       }
     }
@@ -100,11 +96,11 @@ export default function Page() {
 
   socket.on("disconnect", () => {
     setDisconnect(true);
+
     toast({
       title: "Desconectado",
       description: "Você foi desconectado da sala.",
     });
-    console.log("Desconectado");
   });
 
   const createRoom = () => {
@@ -184,6 +180,23 @@ export default function Page() {
 
     return message;
   };
+
+  const formatAverage = (average: any) => {
+    try {
+      const avg = parseFloat(average);
+    
+      if (isNaN(avg)) {
+        return average;
+      }
+
+      const roundedAvg = Math?.round(avg * 100) / 100;
+      const formatted = roundedAvg?.toFixed(2);
+
+      return formatted;
+    } catch (error: any) {
+      return average;
+    }
+}
 
   useEffect(() => {
     if (!roomId || roomData || !username) {
@@ -281,18 +294,25 @@ export default function Page() {
               {!roomId && (
                 <div className="flex flex-col">
                   {roomType === "join" && (
-                    <p className="text-zinc-500 text-sm mb-2 text-center">
+                    <p className="text-zinc-500 text-sm mb-4 text-center">
                       Criar uma nova sala:
                     </p>
                   )}
                   <div className="flex gap-2">
-                    <Input
-                      type="text"
-                      placeholder="Insira seu nome"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <Button onClick={createRoom}>Criar</Button>
+                    <div className="flex flex-col gap-2">
+                      <p className="text-zinc-500 text-sm">
+                        Nome de usuário:
+                      </p>
+                      <Input
+                        type="text"
+                        placeholder="Insira o seu nome"
+                        className="mb-2"
+                        value={username}
+                        onChange={(e) => setUsername(e?.target?.value)}
+                      />
+                      <Button onClick={createRoom}>Criar sala</Button>
+                    </div>
+                    
                   </div>
                 </div>
               )}
@@ -357,7 +377,7 @@ export default function Page() {
                 {showResetButton &&
                   roomData?.average !== undefined &&
                   roomData?.average !== null && (
-                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${roomData?.average}`}</p>
+                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${formatAverage(roomData?.average)}`}</p>
                   )}
               </div>
 
