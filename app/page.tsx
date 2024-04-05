@@ -45,17 +45,16 @@ export default function Page() {
           </Button>
         </div>
       </div>
-      <div className="mt-10 rounded-md flex w-full text-center justify-center border border-zinc-200 flex-col px-4 py-4">
+      <div className="mt-10 py-10 rounded-md flex w-full text-center justify-center border border-zinc-200 flex-col px-4 py-4">
         <p>
-          Se você gosta da nossa aplicação e quiser fazer uma doação mensal de
-          qualquer valor
+          Ajude a manter nosso sistema online e livre de anuncios.
         </p>
         <a
           href="https://www.asaas.com/c/6f2stepyig5a0hxh"
           target="_blank"
           className="mt-4"
         >
-          <Button> clique aqui</Button>
+          <Button>Fazer uma doação</Button>
         </a>
       </div>
     </div>
