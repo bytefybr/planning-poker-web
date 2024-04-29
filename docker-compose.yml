@@ -1,0 +1,7 @@
+version: "3"
+services:
+  plannin-poker-webapp:
+    container_name: plannin-poker-webapp
+    build:
+      context: .
+      dockerfile: ./docker/prod.Dockerfile
