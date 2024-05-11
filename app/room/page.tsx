@@ -39,6 +39,9 @@ export default function Page() {
   const [card, setCard] = useState("");
 
   const [showResetButton, setShowResetButton] = useState(false);
+  const [resetButtonDisabled, setResetButtonDisabled] = useState(false);
+  const [resetButtonTimer, setResetButtonTimer] = useState(0);
+
   const [disconnect, setDisconnect] = useState(false);
 
   socket.on("roomNotFound", () => {
@@ -122,12 +125,15 @@ export default function Page() {
 
   const showAllCards = () => {
     setShowResetButton(true);
+    setResetButtonDisabled(true);
+    setResetButtonTimer(3);
     socket.emit("showCards", roomId);
   };
 
   const resetCards = () => {
     socket.emit("ressetCards", roomId);
     setShowResetButton(false);
+    setResetButtonTimer(3);
     setCard("");
   };
 
@@ -252,6 +258,22 @@ export default function Page() {
     };
   }, []);
 
+  useEffect(() => {
+    let timerInterval: any;
+
+    if (resetButtonTimer > 0) {
+      setResetButtonDisabled(true);
+
+      timerInterval = setInterval(() => {
+        setResetButtonTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else {
+      setResetButtonDisabled(false);
+    }
+
+    return () => clearInterval(timerInterval);
+  }, [resetButtonTimer]);
+
   return (
     <>
       {(roomType || roomId) && (
@@ -300,9 +322,7 @@ export default function Page() {
                   )}
                   <div className="flex gap-2">
                     <div className="flex flex-col gap-2">
-                      <p className="text-zinc-500 text-sm">
-                        Nome de usuário:
-                      </p>
+                      <p className="text-zinc-500 text-sm">Nome de usuário:</p>
                       <Input
                         type="text"
                         placeholder="Insira o seu nome"
@@ -312,7 +332,6 @@ export default function Page() {
                       />
                       <Button onClick={createRoom}>Criar sala</Button>
                     </div>
-                    
                   </div>
                 </div>
               )}
@@ -359,8 +378,14 @@ export default function Page() {
             <>
               <div className="flex flex-col items-center justify-center w-80 h-40 bg-zinc-200 rounded-3xl gap-4 mb-4">
                 {showResetButton && (
-                  <Button variant="outline" onClick={resetCards}>
-                    Próxima rodada
+                  <Button
+                    variant="outline"
+                    onClick={resetCards}
+                    disabled={resetButtonDisabled}
+                  >
+                    Próxima rodada{" "}
+                    {resetButtonDisabled &&
+                      `(${resetButtonTimer})`}
                   </Button>
                 )}
 
@@ -377,7 +402,9 @@ export default function Page() {
                 {showResetButton &&
                   roomData?.average !== undefined &&
                   roomData?.average !== null && (
-                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${formatAverage(roomData?.average)}`}</p>
+                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${formatAverage(
+                      roomData?.average
+                    )}`}</p>
                   )}
               </div>
 
