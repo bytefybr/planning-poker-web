@@ -6,7 +6,7 @@ pipeline {
     }
     
     environment {
-        DOCKER_REGISTRY = "containerregistry.bytefy.com.br"
+        DOCKER_REGISTRY = "index.docker.io"
         DOCKER_IMAGE = "bytefy/planpoker-webapp"
         DOCKERFILE = "docker/prod.Dockerfile"
         
