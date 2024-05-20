@@ -44,31 +44,40 @@ export default function Page() {
 
   const [disconnect, setDisconnect] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   socket.on("roomNotFound", () => {
     setAlertDialogOpen(true);
     setAlertDialogMessage("Sala não encontrada, verifique o ID informado.");
+    setLoading(false);
   });
 
   socket.on("roomCreated", (roomId) => {
     window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
+    
     toast({
       title: "Sala criada!",
       description: "Compartilhe o link com seu time.",
     });
+
+    setLoading(false);
   });
 
   socket.on("ressetMyCard", (roomId) => {
     setCard("");
+    setLoading(false);
   });
 
   socket.on("roomJoined", (roomId) => {
     window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
+    
     toast({
       title: "Acesso concedido!",
       description: `Você entrou na sala #${roomId}.`,
     });
 
     setRoomId(roomId);
+    setLoading(false);
   });
 
   socket.on("roomListUpdate", (data) => {
@@ -83,6 +92,7 @@ export default function Page() {
     setRoomId(data.roomId);
     setRoomData(data);
     setShowResetButton(data.average !== null && data.average !== undefined);
+    setLoading(false);
   });
 
   socket.on("connect", () => {
@@ -104,26 +114,46 @@ export default function Page() {
       title: "Desconectado",
       description: "Você foi desconectado da sala.",
     });
+
+    setLoading(false);
   });
 
   const createRoom = () => {
-    if (username) {
-      socket.emit("createRoom", username);
-      window.localStorage.setItem("pp@username", username);
+    if (loading || !username) {
+      return;
     }
+
+    setLoading(true);
+    socket.emit("createRoom", username);
+    window.localStorage.setItem("pp@username", username);
   };
 
   const joinRoom = () => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
     socket.emit("enterInRoom", roomId, username);
     window.localStorage.setItem("pp@username", username);
   };
 
   const selectCard = (card: any) => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
     socket.emit("selectCard", roomId, card);
     setCard(card);
   };
 
   const showAllCards = () => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
     setShowResetButton(true);
     setResetButtonDisabled(true);
     setResetButtonTimer(3);
@@ -131,6 +161,11 @@ export default function Page() {
   };
 
   const resetCards = () => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
     socket.emit("ressetCards", roomId);
     setShowResetButton(false);
     setResetButtonTimer(3);
@@ -217,16 +252,18 @@ export default function Page() {
   useEffect(() => {
     if (searchParams.has("roomId")) {
       setRoomId(
-        new URLSearchParams(window.location.search).get("roomId") ?? null
+        new URLSearchParams(window?.location?.search).get("roomId") ?? null
       );
       return;
     }
 
     if (searchParams.has("type")) {
       const type = searchParams.get("type");
+
       if (type === "create" || type === "join") {
         setRoomType(type);
       }
+
       return;
     }
 
@@ -237,6 +274,7 @@ export default function Page() {
 
   useEffect(() => {
     const username = window.localStorage.getItem("pp@username");
+    
     if (username) {
       setUsername(username);
     }
@@ -330,7 +368,9 @@ export default function Page() {
                         value={username}
                         onChange={(e) => setUsername(e?.target?.value)}
                       />
-                      <Button onClick={createRoom}>Criar sala</Button>
+                      <Button disabled={loading} onClick={createRoom}>
+                        Criar sala
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -368,7 +408,9 @@ export default function Page() {
                 )}
 
                 {roomId && username && (
-                  <Button onClick={joinRoom}>Entrar</Button>
+                  <Button disabled={loading} onClick={joinRoom}>
+                    Entrar
+                  </Button>
                 )}
               </div>
             </div>
@@ -381,16 +423,17 @@ export default function Page() {
                   <Button
                     variant="outline"
                     onClick={resetCards}
-                    disabled={resetButtonDisabled}
+                    disabled={resetButtonDisabled || loading}
                   >
                     Próxima rodada{" "}
-                    {resetButtonDisabled &&
-                      `(${resetButtonTimer})`}
+                    {resetButtonDisabled && `(${resetButtonTimer})`}
                   </Button>
                 )}
 
                 {!showResetButton && getUsersThatSelected() > 0 && (
-                  <Button onClick={showAllCards}>Revelar cartas</Button>
+                  <Button disabled={loading} onClick={showAllCards}>
+                    Revelar cartas
+                  </Button>
                 )}
 
                 {!showResetButton && (
@@ -466,8 +509,9 @@ export default function Page() {
                     variant={card === "0" ? "default" : "outline"}
                     onClick={() => selectCard("0")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     0
@@ -476,8 +520,9 @@ export default function Page() {
                     variant={card === "1" ? "default" : "outline"}
                     onClick={() => selectCard("1")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     1
@@ -486,8 +531,9 @@ export default function Page() {
                     variant={card === "2" ? "default" : "outline"}
                     onClick={() => selectCard("2")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     2
@@ -496,8 +542,9 @@ export default function Page() {
                     variant={card === "3" ? "default" : "outline"}
                     onClick={() => selectCard("3")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     3
@@ -506,8 +553,9 @@ export default function Page() {
                     variant={card === "5" ? "default" : "outline"}
                     onClick={() => selectCard("5")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     5
@@ -516,8 +564,9 @@ export default function Page() {
                     variant={card === "8" ? "default" : "outline"}
                     onClick={() => selectCard("8")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     8
@@ -526,8 +575,9 @@ export default function Page() {
                     variant={card === "13" ? "default" : "outline"}
                     onClick={() => selectCard("13")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     13
@@ -536,8 +586,9 @@ export default function Page() {
                     variant={card === "21" ? "default" : "outline"}
                     onClick={() => selectCard("21")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     21
@@ -546,8 +597,9 @@ export default function Page() {
                     variant={card === "?" ? "default" : "outline"}
                     onClick={() => selectCard("?")}
                     disabled={
-                      roomData?.average !== null &&
-                      roomData?.average !== undefined
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
                     }
                   >
                     ?
@@ -561,6 +613,7 @@ export default function Page() {
             <Button
               className="mt-4"
               variant="outline"
+              disabled={loading}
               onClick={() => router.push("/")}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
