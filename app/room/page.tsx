@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Adsense } from "@ctrl/react-adsense";
-import { Check, ChevronLeft, Spade } from "lucide-react";
+import { Check, ChevronLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import Script from "next/script";
 import io from "socket.io-client";
 
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL ?? "");
@@ -54,7 +55,7 @@ export default function Page() {
 
   socket.on("roomCreated", (roomId) => {
     window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
-    
+
     toast({
       title: "Sala criada!",
       description: "Compartilhe o link com seu time.",
@@ -70,7 +71,7 @@ export default function Page() {
 
   socket.on("roomJoined", (roomId) => {
     window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
-    
+
     toast({
       title: "Acesso concedido!",
       description: `Você entrou na sala #${roomId}.`,
@@ -225,7 +226,7 @@ export default function Page() {
   const formatAverage = (average: any) => {
     try {
       const avg = parseFloat(average);
-    
+
       if (isNaN(avg)) {
         return average;
       }
@@ -237,7 +238,7 @@ export default function Page() {
     } catch (error: any) {
       return average;
     }
-}
+  };
 
   useEffect(() => {
     if (!roomId || roomData || !username) {
@@ -274,7 +275,7 @@ export default function Page() {
 
   useEffect(() => {
     const username = window.localStorage.getItem("pp@username");
-    
+
     if (username) {
       setUsername(username);
     }
@@ -314,6 +315,13 @@ export default function Page() {
 
   return (
     <>
+      <Script
+        type="text/javascript"
+        src="https://player.viads.com/tag/load-107816.js?tag_id=v107816"
+        async
+      ></Script>
+
+      <div id="v107816"></div>
       {(roomType || roomId) && (
         <main className="flex flex-1 flex-col w-full justify-center items-center">
           <h1
