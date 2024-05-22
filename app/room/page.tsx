@@ -18,7 +18,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import Script from "next/script";
 import io from "socket.io-client";
 
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL ?? "");
@@ -315,13 +314,6 @@ export default function Page() {
 
   return (
     <>
-      <Script
-        type="text/javascript"
-        src="https://player.viads.com/tag/load-107816.js?tag_id=v107816"
-        async
-      ></Script>
-
-      <div id="v107816"></div>
       {(roomType || roomId) && (
         <main className="flex flex-1 flex-col w-full justify-center items-center">
           <h1
