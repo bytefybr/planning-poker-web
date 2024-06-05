@@ -55,7 +55,7 @@ export default function Page() {
       setLoading(false);
     });
 
-    socket.on("roomCreated", (roomId) => {
+    socket.on("roomCreated", (roomId: any) => {
       window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
 
       toast({
@@ -66,12 +66,12 @@ export default function Page() {
       setLoading(false);
     });
 
-    socket.on("ressetMyCard", (roomId) => {
+    socket.on("ressetMyCard", (roomId: any) => {
       setCard("");
       setLoading(false);
     });
 
-    socket.on("roomJoined", (roomId) => {
+    socket.on("roomJoined", (roomId: any) => {
       window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
 
       toast({
@@ -83,7 +83,7 @@ export default function Page() {
       setLoading(false);
     });
 
-    socket.on("roomListUpdate", (data) => {
+    socket.on("roomListUpdate", (data: any) => {
       if (!roomId) {
         window.history.pushState(
           { roomId: data.roomId },
