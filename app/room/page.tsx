@@ -20,103 +20,115 @@ import {
 
 import io from "socket.io-client";
 
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL ?? "");
-
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
-
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const [alertDialogMessage, setAlertDialogMessage] = useState("");
-
   const [roomType, setRoomType] = useState<"create" | "join" | null>(null);
-
   const [roomId, setRoomId] = useState<any>();
   const [username, setUsername] = useState("");
-
   const [roomData, setRoomData] = useState<any>();
   const [card, setCard] = useState("");
-
   const [showResetButton, setShowResetButton] = useState(false);
   const [resetButtonDisabled, setResetButtonDisabled] = useState(false);
   const [resetButtonTimer, setResetButtonTimer] = useState(0);
-
   const [disconnect, setDisconnect] = useState(false);
-
   const [loading, setLoading] = useState(false);
+  const [socket, setSocket] = useState<any>();
 
-  socket.on("roomNotFound", () => {
-    setAlertDialogOpen(true);
-    setAlertDialogMessage("Sala não encontrada, verifique o ID informado.");
-    setLoading(false);
-  });
+  useEffect(() => {
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL ?? "");
 
-  socket.on("roomCreated", (roomId) => {
-    window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
+    setSocket(socket);
 
-    toast({
-      title: "Sala criada!",
-      description: "Compartilhe o link com seu time.",
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  if (socket) {
+    socket.on("roomNotFound", () => {
+      setAlertDialogOpen(true);
+      setAlertDialogMessage("Sala não encontrada, verifique o ID informado.");
+      setLoading(false);
     });
 
-    setLoading(false);
-  });
-
-  socket.on("ressetMyCard", (roomId) => {
-    setCard("");
-    setLoading(false);
-  });
-
-  socket.on("roomJoined", (roomId) => {
-    window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
-
-    toast({
-      title: "Acesso concedido!",
-      description: `Você entrou na sala #${roomId}.`,
-    });
-
-    setRoomId(roomId);
-    setLoading(false);
-  });
-
-  socket.on("roomListUpdate", (data) => {
-    if (!roomId) {
-      window.history.pushState(
-        { roomId: data.roomId },
-        "Sala",
-        `?roomId=${data.roomId}`
-      );
-    }
-
-    setRoomId(data.roomId);
-    setRoomData(data);
-    setShowResetButton(data.average !== null && data.average !== undefined);
-    setLoading(false);
-  });
-
-  socket.on("connect", () => {
-    if (window) {
-      const oldSocketId = window.localStorage?.getItem("pp@oldSocketId");
-
+    socket.on("roomCreated", (roomId) => {
       window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
 
-      if (oldSocketId && oldSocketId !== "" && oldSocketId !== socket.id) {
-        socket.emit("reenterInRoom", oldSocketId);
-      }
-    }
-  });
+      toast({
+        title: "Sala criada!",
+        description: "Compartilhe o link com seu time.",
+      });
 
-  socket.on("disconnect", () => {
-    setDisconnect(true);
-
-    toast({
-      title: "Desconectado",
-      description: "Você foi desconectado da sala.",
+      setLoading(false);
     });
 
-    setLoading(false);
-  });
+    socket.on("ressetMyCard", (roomId) => {
+      setCard("");
+      setLoading(false);
+    });
+
+    socket.on("roomJoined", (roomId) => {
+      window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
+
+      toast({
+        title: "Acesso concedido!",
+        description: `Você entrou na sala #${roomId}.`,
+      });
+
+      setRoomId(roomId);
+      setLoading(false);
+    });
+
+    socket.on("roomListUpdate", (data) => {
+      if (!roomId) {
+        window.history.pushState(
+          { roomId: data.roomId },
+          "Sala",
+          `?roomId=${data.roomId}`
+        );
+      }
+
+      setRoomId(data.roomId);
+      setRoomData(data);
+      setShowResetButton(data.average !== null && data.average !== undefined);
+      setLoading(false);
+    });
+
+    socket.on("connect", () => {
+      if (typeof window !== "undefined") {
+        const oldSocketId = window.localStorage?.getItem("pp@oldSocketId");
+        const frontendCode = localStorage.getItem("pp@frontendCode");
+        if (!frontendCode) {
+          localStorage.setItem(
+            "pp@frontendCode",
+            Math.random().toString(36).substring(2, 15) +
+              Math.random().toString(36).substring(2, 15)
+          );
+        }
+
+        window.localStorage?.setItem("pp@oldSocketId", socket.id ?? "");
+
+        if (oldSocketId && oldSocketId !== "" && oldSocketId !== socket.id) {
+          socket.emit("reenterInRoom", oldSocketId);
+        }
+      }
+    });
+
+    socket.on("disconnect", () => {
+      setDisconnect(true);
+
+      toast({
+        title: "Desconectado",
+        description: "Você foi desconectado da sala.",
+      });
+
+      setLoading(false);
+    });
+  }
 
   const createRoom = () => {
     if (loading || !username) {
@@ -124,7 +136,11 @@ export default function Page() {
     }
 
     setLoading(true);
-    socket.emit("createRoom", username);
+    socket.emit(
+      "createRoom",
+      username,
+      localStorage.getItem("pp@frontendCode")
+    );
     window.localStorage.setItem("pp@username", username);
   };
 
@@ -134,7 +150,12 @@ export default function Page() {
     }
 
     setLoading(true);
-    socket.emit("enterInRoom", roomId, username);
+    socket.emit(
+      "enterInRoom",
+      roomId,
+      username,
+      localStorage.getItem("pp@frontendCode")
+    );
     window.localStorage.setItem("pp@username", username);
   };
 
