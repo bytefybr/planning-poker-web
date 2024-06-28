@@ -304,3 +304,38 @@ yahoo.com, 49648, RESELLER
 yahoo.com, 59531, RESELLER, e1a5b5b6e3255540
 yieldlab.net, 6378054, DIRECT
 yieldmo.com, 2717482690327552870, RESELLER
+ad.plus, 22500435788, DIRECT
+ad.plus, 22691436990, DIRECT
+ad.plus, 22785811991, DIRECT
+ad.plus, 22814249282, DIRECT
+ad.plus, 22835780031, DIRECT
+ad.plus, 22890738172, DIRECT
+ad.plus, 22896142137, DIRECT
+ad.plus, 22921760107, DIRECT
+ad.plus, 22939095442, DIRECT
+ad.plus, 22973575773, DIRECT
+ad.plus, 23009869890, DIRECT
+adform.com, 2742, RESELLER
+appnexus.com, 15325, RESELLER, f5ab79cb980f11d1
+appnexus.com, 15670, RESELLER
+appnexus.com, 15816, RESELLER, f5ab79cb980f11d1
+bidfuse.com, bf-5140, DIRECT
+contextweb.com, 562818, RESELLER, 89ff185a4c4e857c
+datawrkz.com, 1869, DIRECT
+datawrkz.com, 2100, DIRECT
+datawrkz.com, 2308, DIRECT
+eskimi.com, 2020000674, DIRECT
+google.com, pub-6151720204273327, RESELLER, f08c47fec0942fa0
+lijit.com, 502284, RESELLER, fafdf38b16bf6b2b
+openx.com, 560841799, RESELLER, 6a698e2ec38604c6
+pubmatic.com, 162270, RESELLER, 5d62403b186f2ace
+pubmatic.com, 164593, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 26250, RESELLER, 0bfd66d529a55807
+rubiconproject.com, 16474, RESELLER, 0bfd66d529a55807
+rubiconproject.com, 26476, RESELLER, 0bfd66d529a55807
+sharethrough.com, z4z8ek6m, DIRECT, d53b998a7bd4ecd2
+video.unrulymedia.com, 498216989, RESELLER
+vidoomy.com, 3655923, RESELLER
+vidoomy.com, 6585542, DIRECT
+xapads.com, 193353, DIRECT
+yieldlab.net, 6378054, RESELLER

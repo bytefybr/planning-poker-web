@@ -7,7 +7,6 @@ import { GeistSans } from "geist/font/sans";
 import { Suspense, useEffect } from "react";
 import { cn } from "../lib/utils";
 
-import Adsense from "@/components/ui/adsense";
 import Analytics from "@/components/ui/analytics";
 import Footer from "@/components/ui/footer";
 import Header from "@/components/ui/header";
@@ -64,6 +63,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
+          <div id="v107816"></div>
           <main className="flex flex-1 flex-col w-full items-center justify-center px-4 2xl:px-0  py-40">
             <Suspense>
               <div className="flex flex-col max-w-[1400px]">{children}</div>
@@ -73,7 +73,6 @@ export default function RootLayout({
           <Footer />
         </ThemeProvider>
       </body>
-      <Adsense pId="4362319088561782" />
     </html>
   );
 }
