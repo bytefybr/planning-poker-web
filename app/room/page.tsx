@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Adsense } from "@ctrl/react-adsense";
 import { Check, ChevronLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -45,6 +44,22 @@ export default function Page() {
 
     return () => {
       socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const disablePinchZoom = (event: any) => {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("touchmove", disablePinchZoom, {
+      passive: false,
+    });
+
+    return () => {
+      document.removeEventListener("touchmove", disablePinchZoom);
     };
   }, []);
 
@@ -655,8 +670,6 @@ export default function Page() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
-          <Adsense client="ca-pub-4362319088561782" slot="5902105855" />
         </main>
       )}
     </>
