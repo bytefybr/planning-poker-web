@@ -121,7 +121,7 @@ export default function Page() {
           localStorage.setItem(
             "pp@frontendCode",
             Math.random().toString(36).substring(2, 15) +
-              Math.random().toString(36).substring(2, 15)
+            Math.random().toString(36).substring(2, 15)
           );
         }
 
@@ -383,9 +383,8 @@ export default function Page() {
 
           {!roomData && (
             <div
-              className={`flex ${
-                roomType === "create" ? "flex-col" : "flex-col-reverse"
-              } justify-center items-center`}
+              className={`flex ${roomType === "create" ? "flex-col" : "flex-col-reverse"
+                } justify-center items-center`}
             >
               {!roomId && (
                 <div className="flex flex-col">
@@ -503,17 +502,15 @@ export default function Page() {
                         className="flex flex-col items-center justify-center"
                       >
                         <div
-                          className={`flex justify-center items-center w-[50px] h-[65px] rounded-sm border-zinc-950 border-2 dark:border-zinc-500 ${
-                            !user.alreadySelected || numberSelected
-                              ? "bg-zinc-200"
-                              : "bg-white"
-                          }`}
+                          className={`flex justify-center items-center w-[50px] h-[65px] rounded-sm border-zinc-950 border-2 dark:border-zinc-500 ${!user.alreadySelected || numberSelected
+                            ? "bg-zinc-200"
+                            : "bg-white"
+                            }`}
                         >
                           {user.alreadySelected ? (
                             <p
-                              className={`text-zinc-500 text-2xl font-bold ${
-                                numberSelected ? "bg-zinc-200" : "bg-white"
-                              }`}
+                              className={`text-zinc-500 text-2xl font-bold ${numberSelected ? "bg-zinc-200" : "bg-white"
+                                }`}
                             >
                               {numberSelected ? (
                                 <>{user.numberSelected}</>
@@ -621,6 +618,17 @@ export default function Page() {
                   <Button
                     variant={card === "21" ? "default" : "outline"}
                     onClick={() => selectCard("21")}
+                    disabled={
+                      loading ||
+                      (roomData?.average !== null &&
+                        roomData?.average !== undefined)
+                    }
+                  >
+                    21
+                  </Button>
+                  <Button
+                    variant={card === "34" ? "default" : "outline"}
+                    onClick={() => selectCard("34")}
                     disabled={
                       loading ||
                       (roomData?.average !== null &&
