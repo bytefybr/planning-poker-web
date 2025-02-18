@@ -635,7 +635,7 @@ export default function Page() {
                         roomData?.average !== undefined)
                     }
                   >
-                    21
+                    34
                   </Button>
                   <Button
                     variant={card === "?" ? "default" : "outline"}
