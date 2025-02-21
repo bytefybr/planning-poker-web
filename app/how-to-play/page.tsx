@@ -137,10 +137,10 @@ const HowToPlay = () => {
             transition={{ delay: 1.6, duration: 0.8 }}
             className="text-center mt-16"
           >
-            <h2 className="text-2xl font-bold mb-4">Pronto para começar?</h2>
+            <h2 className="text-2xl font-bold mb-4 ">Pronto para começar?</h2>
             <Link
               href="/room?type=create"
-              className="inline-block px-8 py-4 bg-primary text-white rounded-lg font-medium button-hover"
+              className="inline-block px-8 py-4 bg-primary dark:text-black text-white rounded-lg font-medium button-hover"
             >
               Comece a jogar agora
             </Link>
