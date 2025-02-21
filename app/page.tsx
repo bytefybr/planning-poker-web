@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Script from "next/script";
 
+import AdsterraBanner from "@/components/ui/adsterra-banner";
 import AnimatedLogo from "@/components/ui/animated-logo";
 import Link from "next/link";
 
@@ -40,7 +40,7 @@ export default function Page() {
           className="text-center max-w-4xl mx-auto"
         >
           <span className="inline-block px-4 py-1 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary">
-            Plan Poker Online
+            Planning Poker Online
           </span>
           <div className="flex justify-center items-center pb-12">
             <AnimatedLogo />
@@ -146,10 +146,7 @@ export default function Page() {
               Experimente gratuitamente o Plan Poker hoje
             </p>
             <div className="mx-auto" style={{ maxWidth: '728px', height: '90px' }}>
-              <Script 
-                src="//www.highperformanceformat.com/00918d65ec046cdcd2377002a5bda1cf/invoke.js"
-                strategy="lazyOnload"
-              />
+              <AdsterraBanner />
             </div>
           </div>
         </div>
@@ -212,10 +209,7 @@ export default function Page() {
                 Junte-se a milhares de times que já melhoraram suas estimativas
               </p>
               <div className="mx-auto" style={{ maxWidth: '728px', height: '90px' }}>
-                <Script 
-                  src="//www.highperformanceformat.com/00918d65ec046cdcd2377002a5bda1cf/invoke.js"
-                  strategy="lazyOnload"
-                />
+                <AdsterraBanner />
               </div>
             </div>
           </div>
