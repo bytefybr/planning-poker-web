@@ -1,35 +1,34 @@
-import { useEffect, useRef } from 'react';
+/* eslint-disable @next/next/no-sync-scripts */
+import Head from 'next/head';
 
 const AdsterraBanner = () => {
-  const banner = useRef<HTMLDivElement | null>(null);
-    
-  useEffect(() => {
-    const atOptions = {
-      key: "00918d65ec046cdcd2377002a5bda1cf",
-      format: "iframe",
-      height: 90,
-      width: 728,
-      params: {},
-    };
-
-    if (banner.current && !banner.current.firstChild) {
-      const conf = document.createElement("script");
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src = `//www.highperformancedformats.com/${atOptions.key}/invoke.js`;
-      conf.innerHTML = `atOptions = ${JSON.stringify(atOptions)}`;
-
-      banner.current.append(conf);
-      banner.current.append(script);
-    }
-  }, []);
-
   return (
-    <div
-      className="mx-2 my-5 border border-gray-200 justify-center items-center text-white text-center"
-      ref={banner}
-    ></div>
+    <>
+      <Head>
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `
+              atOptions = {
+                'key' : '00918d65ec046cdcd2377002a5bda1cf',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+              };
+            `,
+          }}
+        ></script>
+        <script
+          type="text/javascript"
+          src="//www.highperformanceformat.com/00918d65ec046cdcd2377002a5bda1cf/invoke.js"
+        ></script>
+      </Head>
+      <div id="ad-container">
+        {/* O seu conteúdo do anúncio pode ser injetado automaticamente pela lógica no invoke.js */}
+      </div>
+    </>
   );
-}
+};
 
 export default AdsterraBanner;

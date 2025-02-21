@@ -146,7 +146,6 @@ export default function Page() {
               Experimente gratuitamente o Plan Poker hoje
             </p>
             <div className="mx-auto" style={{ maxWidth: '728px', height: '90px' }}>
-              <AdsterraBanner />
             </div>
           </div>
         </div>
