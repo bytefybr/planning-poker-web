@@ -9,9 +9,10 @@ import { cn } from "../lib/utils";
 import Analytics from "@/components/ui/analytics";
 import Footer from "@/components/ui/footer";
 import Header from "@/components/ui/header";
+import Head from "next/head";
+import GoogleAdsense from "@/components/GoogleAdsense/GoogleAdsense";
 
 import type { Metadata } from "next";
-import GoogleAdsense from "@/components/GoogleAdsense/GoogleAdsense";
 
 export const metadata: Metadata = {
   title: "Planning Poker Online",
@@ -36,6 +37,12 @@ export default function RootLayout({
           GeistSans.variable
         )}
       >
+        <Head>
+          <meta
+            name="site-verification"
+            content="7483b9ecf9f5b3ee2923a31d0d53a2ff"
+          />
+        </Head>
         <Analytics />
         <ThemeProvider
           attribute="class"
