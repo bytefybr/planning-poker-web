@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import AdsterraBanner from "@/components/ui/adsterra-banner";
 import AnimatedLogo from "@/components/ui/animated-logo";
 import Link from "next/link";
 
@@ -142,11 +141,9 @@ export default function Page() {
             <h3 className="text-2xl font-bold mb-4">
               Estimativas mais precisas para seu time ágil
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground">
               Experimente gratuitamente o Plan Poker hoje
             </p>
-            <div className="mx-auto" style={{ maxWidth: '728px', height: '90px' }}>
-            </div>
           </div>
         </div>
       </section>
@@ -204,12 +201,9 @@ export default function Page() {
               <h2 className="text-3xl font-bold mb-6">
                 Plan Poker: A escolha certa para seu time ágil
               </h2>
-              <p className="text-lg text-muted-foreground mb-8">
+              <p className="text-lg text-muted-foreground">
                 Junte-se a milhares de times que já melhoraram suas estimativas
               </p>
-              <div className="mx-auto" style={{ maxWidth: '728px', height: '90px' }}>
-                <AdsterraBanner />
-              </div>
             </div>
           </div>
         </div>
