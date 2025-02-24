@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import AnimatedLogo from "@/components/ui/animated-logo";
 import Link from "next/link";
+import Adsterra from "@/components/ui/adsterra";
 
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
@@ -204,6 +205,7 @@ export default function Page() {
               <p className="text-lg text-muted-foreground">
                 Junte-se a milhares de times que já melhoraram suas estimativas
               </p>
+              <Adsterra />
             </div>
           </div>
         </div>
