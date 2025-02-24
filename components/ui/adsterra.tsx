@@ -2,14 +2,25 @@ import Script from "next/script";
 
 const AdsterraBanner = () => {
   return (
-    <div>
+    <>
       <Script
-        async
-        data-cfasync="false"
-        src="//www.highperformanceformat.com/00918d65ec046cdcd2377002a5bda1cf/invoke.js"
+        id="adsterra-options"
+        dangerouslySetInnerHTML={{
+          __html: `
+                atOptions = {
+                    'key' : '00918d65ec046cdcd2377002a5bda1cf',
+                    'format' : 'iframe',
+                    'height' : 90,
+                    'width' : 728,
+                    'params' : {}
+                };
+            `,
+        }}
       />
-      <div id="container-1a18e04f84e9e1e5a7cddb3311b075be"></div>
-    </div>
+      <Script
+        src={`http://www.highperformanceformat.com/00918d65ec046cdcd2377002a5bda1cf/invoke.js`}
+      />
+    </>
   );
 };
 
