@@ -5,7 +5,11 @@ import { motion } from "framer-motion";
 
 import AnimatedLogo from "@/components/ui/animated-logo";
 import Link from "next/link";
-import Adsterra from "@/components/ui/adsterra";
+
+import AdsterraBanner from "@/components/ui/adsterra-banner";
+import AdsterraNativeBanner from "@/components/ui/adsterra-native-banner";
+import AdsterraPopunder from "@/components/ui/adsterra-popunder";
+import AdsterraSocialBar from "@/components/ui/adsterra-social-bar";
 
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
@@ -117,7 +121,7 @@ export default function Page() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
                 transition={{
-                  delay: 0.6 + (index * 4) * 0.2,
+                  delay: 0.6 + index * 4 * 0.2,
                   duration: 0.8,
                 }}
                 className="text-center"
@@ -145,6 +149,7 @@ export default function Page() {
             <p className="text-muted-foreground">
               Experimente gratuitamente o Plan Poker hoje
             </p>
+            <AdsterraNativeBanner />
           </div>
         </div>
       </section>
@@ -205,7 +210,7 @@ export default function Page() {
               <p className="text-lg text-muted-foreground">
                 Junte-se a milhares de times que já melhoraram suas estimativas
               </p>
-              <Adsterra />
+              <AdsterraBanner />
             </div>
           </div>
         </div>
@@ -268,6 +273,8 @@ export default function Page() {
           </motion.div>
         </div>
       </section>
+      <AdsterraPopunder />
+      <AdsterraSocialBar />
     </div>
   );
 }
