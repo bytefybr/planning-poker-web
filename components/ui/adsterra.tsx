@@ -18,7 +18,7 @@ const AdsterraBanner = () => {
         }}
       />
       <Script
-        src={`http://www.highperformanceformat.com/00918d65ec046cdcd2377002a5bda1cf/invoke.js`}
+        src={`//www.highperformanceformat.com/00918d65ec046cdcd2377002a5bda1cf/invoke.js`}
       />
     </>
   );
