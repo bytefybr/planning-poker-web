@@ -25,7 +25,7 @@ const AnimatedLogo = () => {
       <div className="absolute flex w-[216px] h-[212px] ml-[78px] mt-[14px]">
         <Image
           src="/logo-empty.png"
-          alt="Poker Plan"
+          alt="PlanPoker - Planning Poker Online para Times Ágeis"
           className="dark:invert"
           width={216}
           height={212}

@@ -6,11 +6,6 @@ import { motion } from "framer-motion";
 import AnimatedLogo from "@/components/ui/animated-logo";
 import Link from "next/link";
 
-import AdsterraBanner from "@/components/ui/adsterra-banner";
-import AdsterraNativeBanner from "@/components/ui/adsterra-native-banner";
-import AdsterraPopunder from "@/components/ui/adsterra-popunder";
-import AdsterraSocialBar from "@/components/ui/adsterra-social-bar";
-
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -43,7 +38,7 @@ export default function Page() {
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <span className="inline-block px-4 py-1 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary">
+          <span className="inline-block px-4 py-1 mb-6 mt-6 text-sm font-medium rounded-full bg-primary/10 text-primary">
             Planning Poker Online
           </span>
           <div className="flex justify-center items-center pb-12">
@@ -54,13 +49,15 @@ export default function Page() {
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
             Estimativas ágeis precisas e colaborativas para Scrum Masters,
-            Product Owners e times de desenvolvimento
+            Product Owners e times de desenvolvimento. Planning Poker gratuito
+            com salas ilimitadas, metodologias ágeis e story points em tempo real.
           </p>
           <a
             href="/room?type=create"
             className="inline-block px-8 py-4 bg-primary dark:text-black text-white rounded-lg font-medium button-hover"
+            title="Criar sala de Planning Poker grátis - Estimativas ágeis online"
           >
-            Comece Grátis Agora
+            Criar Sala de Planning Poker Grátis
           </a>
         </motion.div>
       </section>
@@ -149,7 +146,6 @@ export default function Page() {
             <p className="text-muted-foreground">
               Experimente gratuitamente o Plan Poker hoje
             </p>
-            <AdsterraNativeBanner />
           </div>
         </div>
       </section>
@@ -210,7 +206,6 @@ export default function Page() {
               <p className="text-lg text-muted-foreground">
                 Junte-se a milhares de times que já melhoraram suas estimativas
               </p>
-              <AdsterraBanner />
             </div>
           </div>
         </div>
@@ -240,6 +235,52 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Learning Resources Section */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isVisible ? 1 : 0 }}
+            transition={{ delay: 1.0, duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl font-bold mb-4">
+              Aprenda Mais Sobre Metodologias Ágeis
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Recursos educacionais para melhorar suas práticas ágeis
+            </p>
+          </motion.div>
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {learningResources.map((resource, index) => (
+              <motion.div
+                key={resource.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+                transition={{
+                  delay: 1.0 + index * 0.1,
+                  duration: 0.8,
+                }}
+              >
+                <Link href={resource.href} className="block group">
+                  <div className="glass-card p-6 rounded-xl h-full transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      {resource.icon}
+                    </div>
+                    <h3 className="text-lg font-semibold mb-3 group-hover:text-primary transition-colors">
+                      {resource.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {resource.description}
+                    </p>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-24 bg-primary/5">
         <div className="container mx-auto px-4">
@@ -260,21 +301,21 @@ export default function Page() {
               <a
                 href="/room?type=create"
                 className="inline-block px-8 py-4 bg-primary dark:text-black text-white rounded-lg font-medium button-hover"
+                title="Criar sala de Planning Poker online grátis"
               >
-                Criar Sala Grátis
+                Criar Sala de Planning Poker Grátis
               </a>
               <Link
                 href="/how-to-play"
                 className="inline-block px-8 py-4 bg-accent text-accent-foreground rounded-lg font-medium button-hover"
+                title="Aprenda como jogar Planning Poker - Guia completo"
               >
-                Como Jogar
+                Como Jogar Planning Poker
               </Link>
             </div>
           </motion.div>
         </div>
       </section>
-      <AdsterraPopunder />
-      <AdsterraSocialBar />
     </div>
   );
 }
@@ -288,6 +329,7 @@ const features = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        aria-label="Ícone de estimativas precisas"
       >
         <path
           strokeLinecap="round"
@@ -309,6 +351,7 @@ const features = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        aria-label="Ícone de colaboração remota"
       >
         <path
           strokeLinecap="round"
@@ -330,6 +373,7 @@ const features = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        aria-label="Ícone de resultados instantâneos"
       >
         <path
           strokeLinecap="round"
@@ -435,4 +479,73 @@ const faqs = [
     answer:
       "Não há limite de participantes por sala. Seu time inteiro pode participar das sessões de Planning Poker simultaneamente.",
   },
+];
+
+const learningResources = [
+  {
+    id: "planning-poker-guide",
+    href: "/planning-poker-guia",
+    title: "Guia Planning Poker",
+    description: "Aprenda tudo sobre Planning Poker e como aplicar esta técnica eficazmente",
+    icon: (
+      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Ícone do guia Planning Poker">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    )
+  },
+  {
+    id: "agile-methodologies",
+    href: "/metodologias-ageis",
+    title: "Metodologias Ágeis",
+    description: "Entenda Scrum, Kanban e outras metodologias que transformam equipes",
+    icon: (
+      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Ícone de metodologias ágeis">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    )
+  },
+  {
+    id: "scrum-guide",
+    href: "/scrum-guide",
+    title: "Guia Scrum",
+    description: "Framework Scrum explicado de forma clara e prática para seu time",
+    icon: (
+      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Ícone do guia Scrum">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+    )
+  },
+  {
+    id: "estimation-guide",
+    href: "/estimativas-ageis",
+    title: "Estimativas Ágeis",
+    description: "Técnicas e melhores práticas para estimativas mais precisas",
+    icon: (
+      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Ícone de estimativas ágeis">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    )
+  },
+  {
+    id: "meeting-best-practices",
+    href: "/melhores-praticas-reunioes",
+    title: "Reuniões Eficazes",
+    description: "Como conduzir reuniões de planning produtivas e engajantes",
+    icon: (
+      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+      </svg>
+    )
+  },
+  {
+    id: "user-stories",
+    href: "/historias-usuario",
+    title: "Histórias de Usuário",
+    description: "Aprenda a escrever histórias que conectam desenvolvimento com valor",
+    icon: (
+      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    )
+  }
 ];
