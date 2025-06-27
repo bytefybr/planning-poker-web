@@ -282,7 +282,7 @@ export default function Page() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-primary/5">
+      <section className="py-24 bg-primary/5 mb-12">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0 }}
