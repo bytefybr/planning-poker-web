@@ -59,8 +59,8 @@ export default function PlanningPokerGuia() {
               <div className="border-l-4 border-primary pl-4">
                 <h3 className="font-semibold mb-2">2004 - Popularização</h3>
                 <p className="text-muted-foreground">
-                  Mike Cohn populariza a técnica através de seu livro "User Stories Applied" 
-                  e depois em "Agile Estimating and Planning".
+                  Mike Cohn populariza a técnica através de seu livro &ldquo;User Stories Applied&rdquo; 
+                  e depois em &ldquo;Agile Estimating and Planning&rdquo;.
                 </p>
               </div>
               <div className="border-l-4 border-primary pl-4">
