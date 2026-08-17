@@ -37,9 +37,15 @@ export const FIBONACCI_DECK = [
   "?",
 ];
 
-/** Valores de referência usados para montar o deck dentro do intervalo escolhido. */
+/**
+ * Passos possíveis entre as cartas de horas. Usa-se o menor passo que caiba
+ * em MAX_HOURS_CARDS cartas, para intervalos curtos saírem completos
+ * (1h a 8h → 1h, 2h, 3h... 8h) e intervalos longos não virarem uma lista
+ * gigante (0,5h a 1000h → de 100 em 100).
+ */
 export const HOURS_STEPS = [
-  0.5, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 40, 60, 80, 120, 160,
+  0.5, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 25, 30, 40, 50, 60, 80, 100,
+  120, 150, 200, 250, 500, 1000,
 ];
 
 export const DEFAULT_HOURS_RANGE: HoursRange = { min: 0.5, max: 40 };
@@ -118,36 +124,35 @@ export function normalizeHoursRange(range: any): HoursRange {
   return { min: roundHours(parsedMin), max: roundHours(parsedMax) };
 }
 
+/** Múltiplos do passo entre min e max, mais as duas pontas. */
+function hoursValuesForStep(min: number, max: number, step: number) {
+  const values = [min];
+
+  for (let index = Math.floor(min / step) + 1; index * step < max; index++) {
+    values.push(roundHours(index * step));
+  }
+
+  values.push(max);
+
+  return Array.from(new Set(values)).sort((a, b) => a - b);
+}
+
 /**
  * Monta o deck de horas dentro do intervalo escolhido, sempre incluindo as
- * pontas (mínimo e máximo) e limitando a quantidade de cartas.
+ * pontas (mínimo e máximo), com o menor passo que caiba em MAX_HOURS_CARDS.
  */
 export function buildHoursDeck(range: any): string[] {
   const { min, max } = normalizeHoursRange(range);
 
-  const inRange = HOURS_STEPS.filter((step) => step > min && step < max);
-  let values = [min, ...inRange, max];
+  const step =
+    HOURS_STEPS.find(
+      (candidate) =>
+        hoursValuesForStep(min, max, candidate).length <= MAX_HOURS_CARDS
+    ) ?? (max - min) / (MAX_HOURS_CARDS - 1);
 
-  if (values.length > MAX_HOURS_CARDS) {
-    const middle = values.slice(1, -1);
-    const keep = MAX_HOURS_CARDS - 2;
-    const stride = middle.length / keep;
+  const values = hoursValuesForStep(min, max, step);
 
-    values = [
-      min,
-      ...Array.from(
-        { length: keep },
-        (_, index) => middle[Math.floor(index * stride)]
-      ),
-      max,
-    ];
-  }
-
-  const unique = Array.from(new Set(values.map(roundHours))).sort(
-    (a, b) => a - b
-  );
-
-  return [...unique.map((value) => String(value)), "?"];
+  return [...values.map((value) => String(value)), "?"];
 }
 
 export function getDeck(votingType: any, hoursRange?: any): string[] {
