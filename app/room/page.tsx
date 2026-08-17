@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Check, ChevronLeft } from "lucide-react";
+import { Check, ChevronLeft, Clock, Copy, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -19,6 +19,21 @@ import {
 
 import io from "socket.io-client";
 
+import {
+  DEFAULT_HOURS_RANGE,
+  DEFAULT_VOTING_TYPE,
+  VOTING_TYPES,
+  VotingType,
+  buildHoursDeck,
+  formatAverage,
+  formatCardLabel,
+  getDeck,
+  getVotingTypeLabel,
+  normalizeHoursRange,
+  normalizeVotingType,
+  validateHoursRange,
+} from "@/lib/voting";
+
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,6 +43,14 @@ export default function Page() {
   const [roomType, setRoomType] = useState<"create" | "join" | null>(null);
   const [roomId, setRoomId] = useState<any>();
   const [username, setUsername] = useState("");
+  const [votingType, setVotingType] =
+    useState<VotingType>(DEFAULT_VOTING_TYPE);
+  const [hoursMin, setHoursMin] = useState(
+    String(DEFAULT_HOURS_RANGE.min).replace(".", ",")
+  );
+  const [hoursMax, setHoursMax] = useState(
+    String(DEFAULT_HOURS_RANGE.max).replace(".", ",")
+  );
   const [roomData, setRoomData] = useState<any>();
   const [card, setCard] = useState("");
   const [showResetButton, setShowResetButton] = useState(false);
@@ -150,13 +173,30 @@ export default function Page() {
       return;
     }
 
+    if (votingType === "hours") {
+      const error = validateHoursRange(hoursMin, hoursMax);
+
+      if (error) {
+        setAlertDialogMessage(error);
+        setAlertDialogOpen(true);
+        return;
+      }
+    }
+
+    const hoursRange = normalizeHoursRange({ min: hoursMin, max: hoursMax });
+
     setLoading(true);
     socket.emit(
       "createRoom",
       username,
-      localStorage.getItem("pp@frontendCode")
+      localStorage.getItem("pp@frontendCode"),
+      votingType,
+      hoursRange
     );
     window.localStorage.setItem("pp@username", username);
+    window.localStorage.setItem("pp@votingType", votingType);
+    window.localStorage.setItem("pp@hoursMin", hoursMin);
+    window.localStorage.setItem("pp@hoursMax", hoursMax);
   };
 
   const joinRoom = () => {
@@ -258,22 +298,16 @@ export default function Page() {
     return message;
   };
 
-  const formatAverage = (average: any) => {
-    try {
-      const avg = parseFloat(average);
-
-      if (isNaN(avg)) {
-        return average;
-      }
-
-      const roundedAvg = Math?.round(avg * 100) / 100;
-      const formatted = roundedAvg?.toFixed(2);
-
-      return formatted;
-    } catch (error: any) {
-      return average;
-    }
-  };
+  const roomVotingType = normalizeVotingType(roomData?.votingType);
+  const deck = getDeck(roomVotingType, roomData?.hoursRange);
+  const hoursRangeError = validateHoursRange(hoursMin, hoursMax);
+  const hoursDeckPreview = hoursRangeError
+    ? []
+    : buildHoursDeck({ min: hoursMin, max: hoursMax }).filter(
+        (value) => value !== "?"
+      );
+  const cardsRevealed =
+    roomData?.average !== null && roomData?.average !== undefined;
 
   useEffect(() => {
     if (!roomId || roomData || !username) {
@@ -314,6 +348,22 @@ export default function Page() {
     if (username) {
       setUsername(username);
     }
+
+    const savedVotingType = window.localStorage.getItem("pp@votingType");
+
+    if (savedVotingType) {
+      setVotingType(normalizeVotingType(savedVotingType));
+    }
+
+    const savedHoursMin = window.localStorage.getItem("pp@hoursMin");
+    const savedHoursMax = window.localStorage.getItem("pp@hoursMax");
+
+    if (savedHoursMin && savedHoursMax) {
+      if (!validateHoursRange(savedHoursMin, savedHoursMax)) {
+        setHoursMin(savedHoursMin);
+        setHoursMax(savedHoursMax);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -351,109 +401,265 @@ export default function Page() {
   return (
     <>
       {(roomType || roomId) && (
-        <main className="flex flex-1 flex-col w-full justify-center items-center">
-          <h1
-            className="font-bold text-5xl text-center cursor-pointer"
-            onClick={() => {
-              copyToClipboard(window.location.href);
+        <main className="flex flex-1 flex-col w-full items-center px-4 py-8">
+          <div className="w-full max-w-md flex flex-col items-center">
+            <div className="flex items-center gap-2">
+              <h1 className="font-bold text-3xl md:text-4xl text-center tracking-tight">
+                {getTitle(roomType, roomData, roomId)}
+              </h1>
 
-              toast({
-                title: "Link copiado!",
-                description:
-                  "O link da sala foi copiado para a área de transferência.",
-              });
-            }}
-          >
-            {getTitle(roomType, roomData, roomId)}
-          </h1>
+              {roomData && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Copiar link da sala"
+                  aria-label="Copiar link da sala"
+                  onClick={() => {
+                    copyToClipboard(window.location.href);
 
-          <p
-            className="text-zinc-500 text-sm mb-4 text-center cursor-pointer"
-            onClick={() => {
-              copyToClipboard(window.location.href);
+                    toast({
+                      title: "Link copiado!",
+                      description:
+                        "O link da sala foi copiado para a área de transferência.",
+                    });
+                  }}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
 
-              toast({
-                title: "Link copiado!",
-                description: "O link foi copiado para a área de transferência.",
-              });
-            }}
-          >
-            {getSubtitle(roomType, roomData, roomId)}
-          </p>
+            {roomData ? (
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-3 mb-6">
+                <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
+                  <Clock className="h-3 w-3" />
+                  {getVotingTypeLabel(roomVotingType, roomData?.hoursRange)}
+                </span>
+                <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full bg-muted text-muted-foreground">
+                  <Users className="h-3 w-3" />
+                  {`${roomData.users.length} ${roomData.users.length === 1 ? "jogador" : "jogadores"
+                    }`}
+                </span>
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm mt-3 mb-6 text-center">
+                {getSubtitle(roomType, roomData, roomId)}
+              </p>
+            )}
+          </div>
 
           {!roomData && (
-            <div
-              className={`flex ${roomType === "create" ? "flex-col" : "flex-col-reverse"
-                } justify-center items-center`}
-            >
-              {!roomId && (
-                <div className="flex flex-col">
-                  {roomType === "join" && (
-                    <p className="text-zinc-500 text-sm mb-4 text-center">
-                      Criar uma nova sala:
-                    </p>
-                  )}
-                  <div className="flex gap-2">
-                    <div className="flex flex-col gap-2">
-                      <p className="text-zinc-500 text-sm">Nome de usuário:</p>
+            <div className="w-full max-w-md rounded-2xl border border-border/60 bg-card/70 backdrop-blur p-6 shadow-sm">
+              <div
+                className={`flex ${roomType === "create" ? "flex-col" : "flex-col-reverse"
+                  } gap-6`}
+              >
+                {!roomId && (
+                  <div className="flex flex-col gap-4">
+                    {roomType === "join" && (
+                      <p className="text-sm font-medium">Criar uma nova sala</p>
+                    )}
+
+                    <div className="flex flex-col gap-1.5">
+                      <label
+                        htmlFor="username"
+                        className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                      >
+                        Nome de usuário
+                      </label>
                       <Input
+                        id="username"
                         type="text"
                         placeholder="Insira o seu nome"
-                        className="mb-2"
                         value={username}
                         onChange={(e) => setUsername(e?.target?.value)}
                       />
-                      <Button disabled={loading} onClick={createRoom}>
-                        Criar sala
-                      </Button>
                     </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Tipo de votação
+                      </span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {VOTING_TYPES.map((option) => {
+                          const selected = votingType === option.value;
+
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              disabled={loading}
+                              onClick={() => setVotingType(option.value)}
+                              aria-pressed={selected}
+                              className={`relative flex flex-col gap-1 rounded-xl border p-3 text-left transition-colors disabled:opacity-50 ${selected
+                                ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                : "border-border hover:border-primary/40 hover:bg-accent"
+                                }`}
+                            >
+                              {selected && (
+                                <Check className="absolute right-2 top-2 h-3.5 w-3.5 text-primary" />
+                              )}
+                              <span className="text-sm font-medium pr-5">
+                                {option.label}
+                              </span>
+                              <span className="text-xs text-muted-foreground leading-snug">
+                                {option.description}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {votingType === "hours" && (
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Intervalo de horas
+                        </span>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1">
+                            <label
+                              htmlFor="hoursMin"
+                              className="text-xs text-muted-foreground"
+                            >
+                              Mínimo
+                            </label>
+                            <div className="relative">
+                              <Input
+                                id="hoursMin"
+                                type="text"
+                                inputMode="decimal"
+                                placeholder="0,5"
+                                className="pr-7"
+                                value={hoursMin}
+                                onChange={(e) => setHoursMin(e.target.value)}
+                              />
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                                h
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label
+                              htmlFor="hoursMax"
+                              className="text-xs text-muted-foreground"
+                            >
+                              Máximo
+                            </label>
+                            <div className="relative">
+                              <Input
+                                id="hoursMax"
+                                type="text"
+                                inputMode="decimal"
+                                placeholder="40"
+                                className="pr-7"
+                                value={hoursMax}
+                                onChange={(e) => setHoursMax(e.target.value)}
+                              />
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                                h
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {hoursRangeError ? (
+                          <p className="text-xs text-destructive mt-1">
+                            {hoursRangeError}
+                          </p>
+                        ) : (
+                          <div className="flex flex-wrap items-center gap-1 mt-1">
+                            <span className="text-xs text-muted-foreground mr-1">
+                              Cartas:
+                            </span>
+                            {hoursDeckPreview.map((value) => (
+                              <span
+                                key={value}
+                                className="rounded-md border border-border bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground"
+                              >
+                                {formatCardLabel(value, "hours")}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      disabled={
+                        loading || (votingType === "hours" && !!hoursRangeError)
+                      }
+                      onClick={createRoom}
+                    >
+                      Criar sala
+                    </Button>
                   </div>
-                </div>
-              )}
-
-              {!roomId && (
-                <div className="flex w-full max-w-52 gap-2 items-center my-8">
-                  <div className="flex-1 h-[1px] bg-slate-300" />
-                  <p className="text-zinc-500 text-sm">ou</p>
-                  <div className="flex-1 h-[1px] bg-slate-300" />
-                </div>
-              )}
-
-              <div className="flex flex-col gap-3">
-                {roomType === "create" && (
-                  <p className="text-zinc-500 text-sm text-center">
-                    Entrar em uma sala existente:
-                  </p>
                 )}
 
-                <Input
-                  type="text"
-                  placeholder="ID da sala"
-                  value={roomId || ""}
-                  onChange={(e) => setRoomId(e.target.value)}
-                />
+                {!roomId && (
+                  <div className="flex w-full gap-3 items-center">
+                    <div className="flex-1 h-px bg-border" />
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                      ou
+                    </p>
+                    <div className="flex-1 h-px bg-border" />
+                  </div>
+                )}
 
-                {roomId && (
+                <div className="flex flex-col gap-3">
+                  {roomType === "create" && (
+                    <p className="text-sm font-medium">
+                      Entrar em uma sala existente
+                    </p>
+                  )}
+
                   <Input
                     type="text"
-                    placeholder="Insira o seu nome"
-                    value={username || ""}
-                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="ID da sala"
+                    value={roomId || ""}
+                    onChange={(e) => setRoomId(e.target.value)}
                   />
-                )}
 
-                {roomId && username && (
-                  <Button disabled={loading} onClick={joinRoom}>
-                    Entrar
-                  </Button>
-                )}
+                  {roomId && (
+                    <Input
+                      type="text"
+                      placeholder="Insira o seu nome"
+                      value={username || ""}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  )}
+
+                  {roomId && username && (
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      disabled={loading}
+                      onClick={joinRoom}
+                    >
+                      Entrar
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}
 
           {roomData && (
-            <>
-              <div className="flex flex-col items-center justify-center w-80 h-40 bg-zinc-200 rounded-3xl gap-4 mb-4">
+            <div className="w-full max-w-md flex flex-col items-center gap-6">
+              <div className="flex flex-col items-center justify-center w-full rounded-3xl border border-border/60 bg-muted/40 p-6 gap-3 min-h-[10rem]">
+                {showResetButton && cardsRevealed && (
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                      Média
+                    </span>
+                    <span className="text-3xl font-bold">
+                      {formatAverage(roomData?.average, roomVotingType)}
+                    </span>
+                  </div>
+                )}
+
                 {showResetButton && (
                   <Button
                     variant="outline"
@@ -465,66 +671,68 @@ export default function Page() {
                   </Button>
                 )}
 
-                {!showResetButton && getUsersThatSelected() > 0 && (
-                  <Button disabled={loading} onClick={showAllCards}>
-                    Revelar cartas
-                  </Button>
-                )}
-
                 {!showResetButton && (
-                  <p className="text-zinc-500 text-sm">
-                    {getUsersThatSelectedMessage(getUsersThatSelected())}
-                  </p>
-                )}
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      {getUsersThatSelectedMessage(getUsersThatSelected())}
+                    </p>
 
-                {showResetButton &&
-                  roomData?.average !== undefined &&
-                  roomData?.average !== null && (
-                    <p className="text-zinc-500 text-sm font-bold">{`Média: ${formatAverage(
-                      roomData?.average
-                    )}`}</p>
-                  )}
+                    {getUsersThatSelected() > 0 && (
+                      <Button disabled={loading} onClick={showAllCards}>
+                        Revelar cartas
+                      </Button>
+                    )}
+                  </>
+                )}
               </div>
 
-              <div className="flex flex-col items-center justify-center mb-4 gap-3">
-                <p className="text-zinc-500 text-sm text-center">
-                  Jogadores na sala:
+              <div className="flex flex-col items-center justify-center w-full gap-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Jogadores na sala
                 </p>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="flex flex-wrap justify-center gap-4">
                   {roomData.users.map((user: any) => {
                     const numberSelected =
                       user.numberSelected !== null &&
                       user.numberSelected !== undefined;
+                    const cardLabel = formatCardLabel(
+                      user.numberSelected,
+                      roomVotingType
+                    );
 
                     return (
                       <div
                         key={user.socketId}
-                        className="flex flex-col items-center justify-center"
+                        className="flex flex-col items-center justify-center gap-1 w-16"
                       >
                         <div
-                          className={`flex justify-center items-center w-[50px] h-[65px] rounded-sm border-zinc-950 border-2 dark:border-zinc-500 ${!user.alreadySelected || numberSelected
-                            ? "bg-zinc-200"
-                            : "bg-white"
+                          className={`flex justify-center items-center w-[50px] h-[68px] rounded-md border-2 transition-colors ${user.alreadySelected
+                            ? "border-primary bg-primary/5"
+                            : "border-dashed border-border bg-muted/40"
                             }`}
                         >
                           {user.alreadySelected ? (
-                            <p
-                              className={`text-zinc-500 text-2xl font-bold ${numberSelected ? "bg-zinc-200" : "bg-white"
+                            <span
+                              className={`font-bold text-foreground ${cardLabel.length > 3
+                                ? "text-sm"
+                                : cardLabel.length > 2
+                                  ? "text-lg"
+                                  : "text-2xl"
                                 }`}
                             >
                               {numberSelected ? (
-                                <>{user.numberSelected}</>
+                                cardLabel
                               ) : (
-                                <>{<Check />}</>
+                                <Check className="h-6 w-6 text-primary" />
                               )}
-                            </p>
+                            </span>
                           ) : (
-                            <p className="text-2xl font-bold text-zinc-500">
+                            <span className="text-2xl font-bold text-muted-foreground">
                               ?
-                            </p>
+                            </span>
                           )}
                         </div>
-                        <p className="text-zinc-500 text-base font-bold text-center">
+                        <p className="text-xs font-medium text-center text-muted-foreground truncate w-full">
                           {user.username}
                         </p>
                       </div>
@@ -533,130 +741,33 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 mb-3">
-                <p className="text-zinc-500 text-sm text-center">
-                  Selecione a pontuação da tarefa:
+              <div className="flex flex-col gap-3 w-full">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground text-center">
+                  {roomVotingType === "hours"
+                    ? "Selecione as horas estimadas"
+                    : "Selecione a pontuação da tarefa"}
                 </p>
-                <div className="flex gap-2 flex-wrap justify-center max-w-64">
-                  <Button
-                    variant={card === "0" ? "default" : "outline"}
-                    onClick={() => selectCard("0")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    0
-                  </Button>
-                  <Button
-                    variant={card === "1" ? "default" : "outline"}
-                    onClick={() => selectCard("1")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    1
-                  </Button>
-                  <Button
-                    variant={card === "2" ? "default" : "outline"}
-                    onClick={() => selectCard("2")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    2
-                  </Button>
-                  <Button
-                    variant={card === "3" ? "default" : "outline"}
-                    onClick={() => selectCard("3")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    3
-                  </Button>
-                  <Button
-                    variant={card === "5" ? "default" : "outline"}
-                    onClick={() => selectCard("5")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    5
-                  </Button>
-                  <Button
-                    variant={card === "8" ? "default" : "outline"}
-                    onClick={() => selectCard("8")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    8
-                  </Button>
-                  <Button
-                    variant={card === "13" ? "default" : "outline"}
-                    onClick={() => selectCard("13")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    13
-                  </Button>
-                  <Button
-                    variant={card === "21" ? "default" : "outline"}
-                    onClick={() => selectCard("21")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    21
-                  </Button>
-                  <Button
-                    variant={card === "34" ? "default" : "outline"}
-                    onClick={() => selectCard("34")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    34
-                  </Button>
-                  <Button
-                    variant={card === "?" ? "default" : "outline"}
-                    onClick={() => selectCard("?")}
-                    disabled={
-                      loading ||
-                      (roomData?.average !== null &&
-                        roomData?.average !== undefined)
-                    }
-                  >
-                    ?
-                  </Button>
+                <div className="flex gap-2 flex-wrap justify-center">
+                  {deck.map((value) => (
+                    <Button
+                      key={value}
+                      variant={card === value ? "default" : "outline"}
+                      className="h-16 w-14 text-base font-bold"
+                      onClick={() => selectCard(value)}
+                      disabled={loading || cardsRevealed}
+                    >
+                      {formatCardLabel(value, roomVotingType)}
+                    </Button>
+                  ))}
                 </div>
               </div>
-            </>
+            </div>
           )}
 
           {!roomData && (
             <Button
-              className="mt-4"
-              variant="outline"
+              className="mt-6"
+              variant="ghost"
               disabled={loading}
               onClick={() => router.push("/")}
             >
