@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:sharp": "node --test tests/sharp.test.mjs"
   },
   "dependencies": {
     "@ctrl/react-adsense": "^1.7.0",
@@ -25,6 +26,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-ga4": "^2.1.0",
+    "sharp": "^0.33.5",
     "socket.io-client": "^4.7.4",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
